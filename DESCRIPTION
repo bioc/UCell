@@ -27,6 +27,8 @@ Imports: methods,
     SingleCellExperiment,
     SummarizedExperiment
 Suggests: scater,
+    testthat,
+    DelayedArray,
     scRNAseq,
     reshape2,
     patchwork,

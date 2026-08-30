@@ -120,6 +120,42 @@ u_stat_signature_list <- function(sig_list, ranks_matrix, maxRank=1500,
 #' @importFrom methods is 
 #' @import  Matrix
 #' @import  BiocParallel
+#' Is `x` a two-dimensional matrix-like object?
+#'
+#' Matrix classes proliferate (DelayedMatrix, HDF5Matrix, IterableMatrix,
+#' dgeMatrix, ...) and `calculate_Uscore()` already coerces anything that is
+#' not a dgCMatrix, so the entry points test for the capability rather than
+#' enumerate an ever-incomplete list of classes.
+#'
+#' @param x An object
+#' @return TRUE if `x` has a length-2 `dim()`
+#' @noRd
+is_matrix_like <- function(x) {
+    if (is.null(x)) {
+        return(FALSE)
+    }
+    d <- tryCatch(dim(x), error = function(e) NULL)
+    !is.null(d) && length(d) == 2L
+}
+
+#' Coerce a matrix-like object to a dgCMatrix
+#'
+#' Prefers a direct sparse coercion, which out-of-core backends
+#' (DelayedArray/HDF5Array, BPCells) implement without building a dense
+#' intermediate; falls back to the dense route for inputs such as data.frame
+#' that have no direct method.
+#'
+#' @param x A matrix-like object
+#' @return A dgCMatrix
+#' @noRd
+to_dgCMatrix <- function(x) {
+    direct <- tryCatch(methods::as(x, "dgCMatrix"), error = function(e) NULL)
+    if (!is.null(direct)) {
+        return(direct)
+    }
+    Matrix::Matrix(as.matrix(x), sparse = TRUE)
+}
+
 calculate_Uscore <- function(
         matrix, features,  maxRank=1500, chunk.size=100,
         BPPARAM = NULL, ncores=1, w_neg=1, ties.method="average",
@@ -128,7 +164,7 @@ calculate_Uscore <- function(
     
     #Make sure we have a sparse matrix
     if (!methods::is(matrix, "dgCMatrix")) {
-        matrix <- Matrix::Matrix(as.matrix(matrix),sparse = TRUE)
+        matrix <- to_dgCMatrix(matrix)
     }
     missing_genes <- match.arg(missing_genes)
     

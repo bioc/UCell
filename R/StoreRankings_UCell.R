@@ -53,9 +53,12 @@ StoreRankings_UCell <- function(matrix, maxRank=1500, chunk.size=100,
             stop(sprintf("Assay %s not found in sce object.", assay))
         }
         m <- SummarizedExperiment::assay(matrix, assay)
-    } else if (methods::is(matrix, "matrix") |
-        methods::is(matrix, "dgCMatrix") |
-        methods::is(matrix, "data.frame")) { 
+    } else if (methods::is(matrix, "Seurat")) {
+        stop("Pass one of the object's matrices with SeuratObject::LayerData() ",
+            "rather than the Seurat object itself.")
+    } else if (is_matrix_like(matrix)) {
+        # any two-dimensional matrix-like object, including out-of-core
+        # backends such as DelayedMatrix; calculate_Uscore() coerces it
             m <- matrix
     } else {
         stop("Unrecognized input format.")

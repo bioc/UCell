@@ -82,9 +82,12 @@ ScoreSignatures_UCell <- function(
             stop(sprintf("Assay %s not found in sce object.", assay))
         }
         m <- SummarizedExperiment::assay(matrix, assay) 
-    } else if (methods::is(matrix, "matrix") | #matrix or DF
-        methods::is(matrix, "dgCMatrix") |
-        methods::is(matrix, "data.frame")) { 
+    } else if (methods::is(matrix, "Seurat")) {
+        stop("Use AddModuleScore_UCell() for a Seurat object, or pass one of ",
+            "its matrices with SeuratObject::LayerData().")
+    } else if (is_matrix_like(matrix)) {
+        # any two-dimensional matrix-like object, including out-of-core
+        # backends such as DelayedMatrix; calculate_Uscore() coerces it
             m <- matrix
     } else {
         m <- NULL
