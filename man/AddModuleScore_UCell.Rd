@@ -26,7 +26,7 @@ AddModuleScore_UCell(
 
 \item{features}{A list of signatures, for example:
 \code{list( Tcell_signature = c("CD2","CD3E","CD3D"),
-    Myeloid_signature = c("SPI1","FCER1G","CSF1R"))}
+Myeloid_signature = c("SPI1","FCER1G","CSF1R"))}
 You can also specify positive and negative gene sets by adding a + or -
 sign to genes in the signature; see an example below}
 
@@ -36,7 +36,7 @@ a given gene is considered as not expressed.}
 \item{chunk.size}{Number of cells to be processed simultaneously (lower
 size requires slightly more computation but reduces memory demands)}
 
-\item{BPPARAM}{A \code{\link[BiocParallel:register]{BiocParallel::bpparam()}} object that tells UCell
+\item{BPPARAM}{A \code{\link[BiocParallel:bpparam]{BiocParallel::bpparam()}} object that tells UCell
 how to parallelize. If provided, it overrides the \code{ncores} parameter.}
 
 \item{ncores}{Number of processors to parallelize computation. If

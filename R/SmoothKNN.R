@@ -58,17 +58,14 @@
 #'                   Myeloid = c("SPI1","FCER1G","CSF1R"))
 #' # Calculate UCell scores
 #' sce <- ScoreSignatures_UCell(sce, features=gene.sets, name=NULL)
-#' # Run PCA
-#' sce <- logNormCounts(sce)
+#' # Run PCA (sample.matrix is already log-normalized, see ?sample.matrix)
+#' logcounts(sce) <- counts(sce)
 #' sce <- runPCA(sce, scale=TRUE, ncomponents=5)
 #' # Smooth signatures
 #' sce <- SmoothKNN(sce, k=3, signature.names=names(gene.sets))
 #' # See results
 #' altExp(sce, 'UCell')
 #' assays(altExp(sce, 'UCell'))
-#' # Plot on UMAP
-#' sce <- runUMAP(sce, dimred="PCA")
-#' plotUMAP(sce, colour_by = "Tcell_kNN", by_exprs_values = "UCell_kNN")
 #' 
 #' @importFrom methods setMethod setGeneric is
 #' @import BiocNeighbors

@@ -16,7 +16,7 @@ StoreRankings_UCell(
 )
 }
 \arguments{
-\item{matrix}{Input matrix, either stored in a \link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment::SingleCellExperiment} object
+\item{matrix}{Input matrix, either stored in a \link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment} object
 or as a raw matrix. \code{dgCMatrix} format supported.}
 
 \item{maxRank}{Maximum number of genes to rank per cell; above this rank, a
@@ -25,7 +25,7 @@ given gene is considered as not expressed}
 \item{chunk.size}{Number of cells to be processed simultaneously (lower size
 requires slightly more computation but reduces memory demands)}
 
-\item{BPPARAM}{A \code{\link[BiocParallel:register]{BiocParallel::bpparam()}} object that tells UCell
+\item{BPPARAM}{A \code{\link[BiocParallel:bpparam]{BiocParallel::bpparam()}} object that tells UCell
 how to parallelize. If provided, it overrides the \code{ncores} parameter.}
 
 \item{ncores}{Number of processors to parallelize computation. If

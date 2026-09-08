@@ -1,14 +1,6 @@
-set.seed(42)
+# make_counts() and sig() come from helper-counts.R
 
-make_counts <- function(nfeat = 60, ncell = 40) {
-  m <- matrix(rpois(nfeat * ncell, lambda = 3), nrow = nfeat, ncol = ncell)
-  dimnames(m) <- list(paste0("gene", seq_len(nfeat)), paste0("cell", seq_len(ncell)))
-  m
-}
-
-sig <- function(m) list(sigA = rownames(m)[1:10], sigB = rownames(m)[11:20])
-
-test_that("ScoreSignatures_UCell accepts the classic input formats", {
+test_that("ScoreSignatures_UCell accepts count matrix", {
   m <- make_counts()
   ref <- ScoreSignatures_UCell(m, features = sig(m), ncores = 1)
   expect_true(is.matrix(ref))
@@ -23,7 +15,7 @@ test_that("ScoreSignatures_UCell accepts the classic input formats", {
   )
 })
 
-test_that("ScoreSignatures_UCell accepts other matrix-like classes", {
+test_that("ScoreSignatures_UCell accepts DelayedArray input", {
   skip_if_not_installed("DelayedArray")
   m <- make_counts()
   ref <- ScoreSignatures_UCell(m, features = sig(m), ncores = 1)

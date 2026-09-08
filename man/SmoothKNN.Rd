@@ -55,7 +55,7 @@ SmoothKNN(
 )
 }
 \arguments{
-\item{obj}{Input object - either a \link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment::SingleCellExperiment} object
+\item{obj}{Input object - either a \link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment} object
 or a Seurat object.}
 
 \item{signature.names}{The names of the signatures (or any numeric metadata
@@ -71,11 +71,11 @@ It must be already present in the input object.}
 \item{up.only}{If set to TRUE, smoothed scores will only be allowed
 to increase by smoothing}
 
-\item{BNPARAM}{A \link[BiocNeighbors:BiocNeighborParam]{BiocNeighbors::BiocNeighborParam} object specifying the algorithm to use
+\item{BNPARAM}{A \link[BiocNeighbors:BiocNeighborParam]{BiocNeighborParam} object specifying the algorithm to use
 for kNN calculation.}
 
-\item{BPPARAM}{A \code{\link[BiocParallel:register]{BiocParallel::bpparam()}} object for parallel computing,
-e.g. \link[BiocParallel:MulticoreParam-class]{BiocParallel::MulticoreParam} or \link[BiocParallel:SnowParam-class]{BiocParallel::SnowParam}}
+\item{BPPARAM}{A \code{\link[BiocParallel:bpparam]{BiocParallel::bpparam()}} object for parallel computing,
+e.g. \link[BiocParallel:MulticoreParam]{MulticoreParam} or \link[BiocParallel:SnowParam]{SnowParam}}
 
 \item{suffix}{Suffix to append to metadata columns
 for the new knn-smoothed scores}
@@ -129,16 +129,13 @@ gene.sets <- list( Tcell = c("CD2","CD3E","CD3D"),
                   Myeloid = c("SPI1","FCER1G","CSF1R"))
 # Calculate UCell scores
 sce <- ScoreSignatures_UCell(sce, features=gene.sets, name=NULL)
-# Run PCA
-sce <- logNormCounts(sce)
+# Run PCA (sample.matrix is already log-normalized, see ?sample.matrix)
+logcounts(sce) <- counts(sce)
 sce <- runPCA(sce, scale=TRUE, ncomponents=5)
 # Smooth signatures
 sce <- SmoothKNN(sce, k=3, signature.names=names(gene.sets))
 # See results
 altExp(sce, 'UCell')
 assays(altExp(sce, 'UCell'))
-# Plot on UMAP
-sce <- runUMAP(sce, dimred="PCA")
-plotUMAP(sce, colour_by = "Tcell_kNN", by_exprs_values = "UCell_kNN")
 
 }

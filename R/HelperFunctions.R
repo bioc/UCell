@@ -120,42 +120,7 @@ u_stat_signature_list <- function(sig_list, ranks_matrix, maxRank=1500,
 #' @importFrom methods is 
 #' @import  Matrix
 #' @import  BiocParallel
-#' Is `x` a two-dimensional matrix-like object?
-#'
-#' Matrix classes proliferate (DelayedMatrix, HDF5Matrix, IterableMatrix,
-#' dgeMatrix, ...) and `calculate_Uscore()` already coerces anything that is
-#' not a dgCMatrix, so the entry points test for the capability rather than
-#' enumerate an ever-incomplete list of classes.
-#'
-#' @param x An object
-#' @return TRUE if `x` has a length-2 `dim()`
-#' @noRd
-is_matrix_like <- function(x) {
-    if (is.null(x)) {
-        return(FALSE)
-    }
-    d <- tryCatch(dim(x), error = function(e) NULL)
-    !is.null(d) && length(d) == 2L
-}
-
-#' Coerce a matrix-like object to a dgCMatrix
-#'
-#' Prefers a direct sparse coercion, which out-of-core backends
-#' (DelayedArray/HDF5Array, BPCells) implement without building a dense
-#' intermediate; falls back to the dense route for inputs such as data.frame
-#' that have no direct method.
-#'
-#' @param x A matrix-like object
-#' @return A dgCMatrix
-#' @noRd
-to_dgCMatrix <- function(x) {
-    direct <- tryCatch(methods::as(x, "dgCMatrix"), error = function(e) NULL)
-    if (!is.null(direct)) {
-        return(direct)
-    }
-    Matrix::Matrix(as.matrix(x), sparse = TRUE)
-}
-
+#' 
 calculate_Uscore <- function(
         matrix, features,  maxRank=1500, chunk.size=100,
         BPPARAM = NULL, ncores=1, w_neg=1, ties.method="average",
@@ -192,7 +157,7 @@ calculate_Uscore <- function(
     
     #Either take a BPPARAM object, or make one on the spot using 'ncores'
     if (is.null(BPPARAM)) {
-        BPPARAM <- BiocParallel::MulticoreParam(workers=ncores)
+        BPPARAM <- default_bpparam(ncores)
     }
     meta.list <- BiocParallel::bplapply(
         X = split.data, 
@@ -228,6 +193,24 @@ calculate_Uscore <- function(
     return(meta.list)
 }
 
+#' Default parallel back-end for a given number of cores
+#'
+#' `MulticoreParam(workers=1)` forks a subprocess to run a single worker,
+#' which costs considerably more than the work itself on small inputs. Serial
+#' evaluation is equivalent, and is what MulticoreParam falls back to on
+#' Windows in any case.
+#'
+#' @param ncores Number of processors requested
+#' @return A [BiocParallel::BiocParallelParam] object
+#' @noRd
+default_bpparam <- function(ncores) {
+    if (is.null(ncores) || ncores <= 1) {
+        BiocParallel::SerialParam()
+    } else {
+        BiocParallel::MulticoreParam(workers = ncores)
+    }
+}
+
 #' Get signature scores from pre-computed rank matrix
 #' 
 #' @param ranks_matrix  A rank matrix
@@ -261,7 +244,7 @@ rankings2Uscore <- function(ranks_matrix, features, chunk.size=100, w_neg=1,
     
     #Either take a BPPARAM object, or make one on the spot using 'ncores'
     if (is.null(BPPARAM)) {
-        BPPARAM <- BiocParallel::MulticoreParam(workers=ncores)
+        BPPARAM <- default_bpparam(ncores)
     }
     meta.list <- BiocParallel::bplapply(
         X = split.data, 
@@ -610,4 +593,40 @@ SmoothKNN.SingleCellExperiment <- function(
     SummarizedExperiment(assays = setNames(l, sce.newexp))
 
   return(obj)
+}
+
+#' Is x a two-dimensional matrix-like object?
+#'
+#' Matrix classes proliferate (DelayedMatrix, HDF5Matrix, IterableMatrix,
+#' dgeMatrix, ...) and `calculate_Uscore()` already coerces anything that is
+#' not a dgCMatrix, so the entry points test for the capability rather than
+#' enumerate an ever-incomplete list of classes.
+#'
+#' @param x An object
+#' @return TRUE if `x` has a length-2 `dim()`
+#' @noRd
+is_matrix_like <- function(x) {
+  if (is.null(x)) {
+    return(FALSE)
+  }
+  d <- tryCatch(dim(x), error = function(e) NULL)
+  !is.null(d) && length(d) == 2L
+}
+
+#' Coerce a matrix-like object to a dgCMatrix
+#'
+#' Prefers a direct sparse coercion, which out-of-core backends
+#' (DelayedArray/HDF5Array, BPCells) implement without building a dense
+#' intermediate; falls back to the dense route for inputs such as data.frame
+#' that have no direct method.
+#'
+#' @param x A matrix-like object
+#' @return A dgCMatrix
+#' @noRd
+to_dgCMatrix <- function(x) {
+  direct <- tryCatch(methods::as(x, "dgCMatrix"), error = function(e) NULL)
+  if (!is.null(direct)) {
+    return(direct)
+  }
+  Matrix::Matrix(as.matrix(x), sparse = TRUE)
 }

@@ -11,7 +11,7 @@ A sparse matrix of 30 cells and 20729 genes.
 \url{https://doi.org/10.1016/j.cell.2021.04.048}
 }
 \usage{
-sample.matrix
+data(sample.matrix)
 }
 \description{
 A sparse matrix (class "dgCMatrix") of single-cell transcriptomes

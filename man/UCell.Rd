@@ -83,6 +83,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Massimo Andreatta \email{massimo.andreatta@unige.ch} (\href{https://orcid.org/0000-0002-8036-2647}{ORCID})
   \item Santiago Carmona \email{santiago.carmona@unige.ch} (\href{https://orcid.org/0000-0002-2495-0671}{ORCID})
 }
 

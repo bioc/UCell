@@ -21,12 +21,12 @@ ScoreSignatures_UCell(
 )
 }
 \arguments{
-\item{matrix}{Input matrix, either stored in a \link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment::SingleCellExperiment} object
+\item{matrix}{Input matrix, either stored in a \link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment} object
 or as a raw matrix. \code{dgCMatrix} format supported.}
 
 \item{features}{A list of signatures, for example:
 \code{list(Tcell_signature = c("CD2","CD3E","CD3D"),
-    Myeloid_signature = c("SPI1","FCER1G","CSF1R"))}
+Myeloid_signature = c("SPI1","FCER1G","CSF1R"))}
 You can also specify positive and negative gene sets by adding a + or -
 sign to genes in the signature; see an example below}
 
@@ -53,7 +53,7 @@ requires slightly more computation but reduces memory demands)}
 "impute": impute expression to zero; "skip": remove missing
 genes from signature}
 
-\item{BPPARAM}{A \code{\link[BiocParallel:register]{BiocParallel::bpparam()}} object that tells UCell
+\item{BPPARAM}{A \code{\link[BiocParallel:bpparam]{BiocParallel::bpparam()}} object that tells UCell
 how to parallelize. If provided, it overrides the \code{ncores} parameter.}
 
 \item{ncores}{Number of processors to parallelize computation. If

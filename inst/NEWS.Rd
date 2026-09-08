@@ -1,6 +1,12 @@
 \name{NEWS}
 \title{News for package \pkg{UCell}}
 
+\section{New in version 2.17.1}{
+\itemize{
+    \item Accept any matrix-like inputs, includes DelayedArrays (credit to B. Demaille, see PR #55: \url{https://github.com/carmonalab/UCell/pull/55})
+    \item Add tests for main functions
+    \item Default BPparam to SerialParam() for single-threaded runs
+}}
 
 \section{New in version 2.13.3}{
 \itemize{
@@ -11,14 +17,14 @@
 
 \section{New in version 2.7.6}{
 \itemize{
-    \item Changed factor for normalization of UCell scores, to account for minimal rank. For typical use cases the behaviour is similar to the previous implementation, but has an impact with very large signatures (UCell score distributions are now more homogeneous). See function \code{UCell:::u_stat()}) for details.
+    \item Changed factor for normalization of UCell scores, to account for minimal rank. For typical use cases the behaviour is similar to the previous implementation, but has an impact with very large signatures (UCell score distributions are now more homogeneous). See function \code{UCell:::u_stat()} for details.
 }}
 
 \section{New in version 2.7.4}{
 \itemize{
     \item Add support for Seurat v5 assay and datasets in multiple layers. Added dependency on Seurat >= 5.0.
     \item Change default for \code{chunk.size} to 100. On parallelized jobs, this can improve up to 2-fold execution time.
-    \item Smaller test dataset (30 cells), to speed up package function checks.  
+    \item Smaller test dataset (30 cells), to speed up package function checks.
 }}
 
 \section{New in version 2.1.2}{
@@ -26,7 +32,7 @@
     \item New function \code{SmoothKNN()} for k-nearest neighbor smoothing of UCell scores. It can be applied both on SingleCellExperiment and Seurat objects (S3 method).
     \item Add two new vignettes: along with basic usage (vignette 1), there are now dedicated vignettes for running UCell with SingleCellExperiment objects (vignette 2) and Seurat objects (vignette 3). kNN smoothing is illustrated for both object types.
     \item Fixing a bug that prevented storing of feature ranks.
-   
+
 }}
 
 \section{New in version 2.0.0}{
